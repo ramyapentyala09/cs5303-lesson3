@@ -3,6 +3,15 @@ enum PhotoSource {
 }
 
 class PhotoMemo {
+  // keys for Firestore doc
+  static const TITLE = 'title';
+  static const MEMO = 'memo';
+  static const CREATED_BY = 'createdby';
+  static const PHOTO_URL = 'photoURL';
+  static const PHOTO_FILENAME = 'photofilename';
+  static const TIMESTAMP = 'timestamp';
+  static const SHARED_WITH = 'sharedwith';
+  static const IMAGE_LABELS = 'imagelabels';
   String? docId;
   late String createdBy;
   late String title;
@@ -27,6 +36,18 @@ class PhotoMemo {
     
     this.sharedWith = sharedWith == null ? [] : [...sharedWith];
     this.imageLabels = imageLabels == null ? [] : [...imageLabels];
+  }
+  Map<String, dynamic> toFirestoreDoc() {
+    return {
+      TITLE: this.title,
+      CREATED_BY: this.createdBy,
+      MEMO: this.memo,
+      PHOTO_FILENAME: this.photoFilename,
+      PHOTO_URL: this.photoURL,
+      TIMESTAMP: this.timestamp,
+      SHARED_WITH: this.sharedWith,
+      IMAGE_LABELS: this.imageLabels, 
+    };
   }
 
 
