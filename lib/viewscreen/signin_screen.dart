@@ -115,9 +115,9 @@ class _Controller {
       //print('${user?.email}');
       Navigator.pushNamed(
         state.context,
-        UserHomeScreen.routName,
+        UserHomeScreen.routeName,
         arguments: {
-          ARGS.USER : user,
+          ARGS.USER: user,
         },
       );
     } catch (e) {

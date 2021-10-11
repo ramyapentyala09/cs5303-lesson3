@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lesson3/viewscreen/addnewphotomemo_screen.dart';
 import 'package:lesson3/viewscreen/internalerror_screen.dart';
 import 'package:lesson3/viewscreen/signin_screen.dart';
 import 'package:lesson3/model/constant.dart';
@@ -19,7 +21,7 @@ class Lesson3App extends StatelessWidget {
       initialRoute: SignInScreen.routeName,
       routes: {
         SignInScreen.routeName: (context) => SignInScreen(),
-        UserHomeScreen.routName: (context) {
+        UserHomeScreen.routeName: (context) {
           Object? args = ModalRoute.of(context)?.settings.arguments;
           if (args == null) {
             return InternalErrorScreen('args is null at UserHomeScreen');
@@ -27,6 +29,16 @@ class Lesson3App extends StatelessWidget {
             var argument = args as Map;
             var user = argument[ARGS.USER];
             return UserHomeScreen(user: user);
+          }
+        },
+        AddNewPhotoMemoScreen.routeName: (context) {
+          Object? args = ModalRoute.of(context)?.settings.arguments;
+          if (args == null) {
+            return InternalErrorScreen('args is null at UserHomeScreen');
+          } else {
+            var argument = args as Map;
+            var user = argument[ARGS.USER];
+            return AddNewPhotoMemoScreen(user: user);
           }
         }
       },
