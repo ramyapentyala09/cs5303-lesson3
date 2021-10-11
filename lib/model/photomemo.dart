@@ -1,3 +1,7 @@
+enum PhotoSource {
+  CAMERA, GALLERY,
+}
+
 class PhotoMemo {
   String? docId;
   late String createdBy;
