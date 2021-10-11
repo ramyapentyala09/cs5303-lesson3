@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lesson3/controller/cloudstorage_controller.dart';
+import 'package:lesson3/controller/firestore_controller.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:image_picker/image_picker.dart';
@@ -152,8 +153,12 @@ progressMessage = 'Uploading $progress %';
 
   },
   );
-  print('===== photo filename: ${photoInfo[ARGS.Filename]}');
-  print('===== photo URL: ${photoInfo[ARGS.DownloadURL]}');
+  tempMemo.photoFilename = photoInfo[ARGS.Filename];
+  tempMemo.photoURL = photoInfo[ARGS.DownloadURL];
+tempMemo.createdBy = state.widget.user.email!;
+tempMemo.timestamp = DateTime.now();
+String docId = await FirestoreController.addPhotoMemo(photoMemo: tempMemo);
+    tempMemo.docId = docId;
     } catch (e) {
       if (Constant.DEV) print('===== Add new photomemo failed: $e');
 MyDialog.showSnackBar(
