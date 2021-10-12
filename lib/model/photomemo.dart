@@ -67,8 +67,6 @@ return PhotoMemo(
   : DateTime.now(),
   );
   }
-
-
 static String? validateTitle(String? value){
   return value == null || value.trim().length < 3 ? 'Title too short' : null;
 }

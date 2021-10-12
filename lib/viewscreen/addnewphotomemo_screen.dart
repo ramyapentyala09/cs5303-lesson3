@@ -105,7 +105,7 @@ class _AddNewPhotoMemoState extends State<AddNewPhotoMemoScreen> {
                 keyboardType: TextInputType.multiline,
                 maxLines: 6,
                 validator: PhotoMemo.validateMemo,
-                onSaved: con.saveTitle,
+                onSaved: con.saveMemo,
               ),
               TextFormField(
                 decoration: InputDecoration(
