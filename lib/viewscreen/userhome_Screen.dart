@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lesson3/controller/firebaseauth_controller.dart';
+import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/viewscreen/addnewphotomemo_screen.dart';
 import 'package:lesson3/model/constant.dart';
 
@@ -10,8 +11,9 @@ class UserHomeScreen extends StatefulWidget {
   late final User user;
   late final String displayName;
   late final String email;
+  final List<PhotoMemo> photoMemoList;
 
-  UserHomeScreen({required this.user}) {
+  UserHomeScreen({required this.user, required this.photoMemoList}) {
     displayName = user.displayName ?? 'N/A';
     email = user.email ?? 'No Email';
   }
@@ -59,7 +61,7 @@ class _UserHomeState extends State<UserHomeScreen> {
           child: Icon(Icons.add),
           onPressed: con.addButton,
         ),
-        body: Text('user home: ${widget.user.email}'),
+        body: Text('user home: ${widget.user.email}\nphotoMemo: ${widget.photoMemoList.length}'),
       ),
     );
   }
