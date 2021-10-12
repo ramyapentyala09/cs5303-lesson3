@@ -108,7 +108,7 @@ class _Controller {
     currentState.save();
 
     User? user;
-
+MyDialog.circularProgressStart(state.context);
     try {
       if (email == null || password == null) {
         throw 'Email or passowrd is null';
@@ -118,6 +118,7 @@ class _Controller {
       //print('${user?.email}');
 
       List<PhotoMemo> photoMemoList = await FirestoreController.getPhotoMemoList(email: email!);
+      MyDialog.circularProgressStop(state.context);
       Navigator.pushNamed(
         state.context,
         UserHomeScreen.routeName,
@@ -127,6 +128,7 @@ class _Controller {
         },
       );
     } catch (e) {
+      MyDialog.circularProgressStop(state.context);
       if (Constant.DEV) print('----Signin error: $e');
       MyDialog.showSnackBar(
         context: state.context,
