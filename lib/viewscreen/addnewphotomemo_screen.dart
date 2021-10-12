@@ -164,6 +164,9 @@ class _Controller {
       String docId = await FirestoreController.addPhotoMemo(photoMemo: tempMemo);
       tempMemo.docId = docId;
 
+      // return to UserHome screen
+      Navigator.pop(state.context);
+
       
     } catch (e) {
       if (Constant.DEV) print('----Add new photomemo failed: $e');
