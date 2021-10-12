@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lesson3/controller/cloudstorage_controller.dart';
@@ -71,22 +70,24 @@ class _AddNewPhotoMemoState extends State<AddNewPhotoMemoScreen> {
                         onSelected: con.getPhoto,
                         itemBuilder: (context) => [
                           for (var source in PhotoSource.values)
-                          PopupMenuItem(
-                            value: source,
-                            child: Text('${source.toString().split('.')[1]}'),
-                          )
+                            PopupMenuItem(
+                              value: source,
+                              child: Text('${source.toString().split('.')[1]}'),
+                            )
                         ],
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
               con.progressMessage == null
-               ? SizedBox(height: 1.0,
-               ) 
-               :
-              Text(con.progressMessage!, 
-              style: Theme.of(context).textTheme.headline6,),
+                  ? SizedBox(
+                      height: 1.0,
+                    )
+                  : Text(
+                      con.progressMessage!,
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
               TextFormField(
                 decoration: InputDecoration(
                   hintText: 'Title',
@@ -126,65 +127,66 @@ class _Controller {
   late _AddNewPhotoMemoState state;
   PhotoMemo tempMemo = PhotoMemo();
   String? progressMessage;
+
   _Controller(this.state);
 
   void save() async {
     FormState? currentstate = state.formKey.currentState;
     if (currentstate == null || !currentstate.validate()) return;
     currentstate.save();
-    if(state.photo == null) {
+
+    if (state.photo == null) {
       MyDialog.showSnackBar(
         context: state.context,
-        message: 'Photo not selected',
+        message: 'Photo not Selected',
       );
       return;
     }
-    try {
-Map photoInfo = await CloudStorageController.uploadPhotoFile(
-  photo: state.photo!, 
-  uid: state.widget.user.uid,
-  listener: (progress) {
-state.render((){
-if (progress == 100)
-progressMessage = null;
-else
-progressMessage = 'Uploading $progress %';
-});
 
-  },
-  );
-  tempMemo.photoFilename = photoInfo[ARGS.Filename];
-  tempMemo.photoURL = photoInfo[ARGS.DownloadURL];
-tempMemo.createdBy = state.widget.user.email!;
-tempMemo.timestamp = DateTime.now();
-String docId = await FirestoreController.addPhotoMemo(photoMemo: tempMemo);
-    tempMemo.docId = docId;
+    try {
+      Map photoInfo = await CloudStorageController.uploadPhotoFile(
+        photo: state.photo!,
+        uid: state.widget.user.uid,
+        listner: (progress) {
+          state.render(() {
+            if (progress == 100)
+              progressMessage = null;
+            else
+              progressMessage = 'Uploading $progress %';
+          });
+        },
+      );
+      tempMemo.photoFilename = photoInfo[ARGS.Filename];
+      tempMemo.photoURL = photoInfo[ARGS.DownloadURL];
+      tempMemo.createdBy = state.widget.user.email!;
+      tempMemo.timestamp = DateTime.now();
+
+      String docId = await FirestoreController.addPhotoMemo(photoMemo: tempMemo);
+      tempMemo.docId = docId;
+
+      
     } catch (e) {
-      if (Constant.DEV) print('===== Add new photomemo failed: $e');
-MyDialog.showSnackBar(
-  context: state.context,
-  message: 'Add new photomemo failed: $e',
-  );
+      if (Constant.DEV) print('----Add new photomemo failed: $e');
+      MyDialog.showSnackBar(
+          context: state.context, message: 'Add New photomemo failed: $e');
     }
   }
 
   void getPhoto(PhotoSource source) async {
     try {
-      var imageSource = source == PhotoSource.CAMERA 
-      ? ImageSource.camera 
-      : ImageSource.gallery;
+      var imageSource = source == PhotoSource.CAMERA
+          ? ImageSource.camera
+          : ImageSource.gallery;
       XFile? image = await ImagePicker().pickImage(source: imageSource);
-      if (image == null) return; // canceled by camera or gallery
+      if (image == null) return;
       state.render(() => state.photo = File(image.path));
-     
     } catch (e) {
-      if (Constant.DEV) print('===== failed to get a pic: $e');
+      if (Constant.DEV) print('----Failed to get a pic: $e');
       MyDialog.showSnackBar(
         context: state.context,
         message: 'Failed to get a picture: $e',
-        );
-
-}
+      );
+    }
   }
 
   void saveTitle(String? value) {
@@ -197,6 +199,7 @@ MyDialog.showSnackBar(
 
   void saveSharedWith(String? value) {
     if (value != null && value.trim().length != 0) {
+      tempMemo.sharedWith.clear();
       tempMemo.sharedWith.addAll(value.trim().split(RegExp('(,| )+')));
     }
   }
