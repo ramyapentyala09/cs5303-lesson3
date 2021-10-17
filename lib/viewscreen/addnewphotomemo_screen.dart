@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lesson3/controller/cloudstorage_controller.dart';
 import 'package:lesson3/controller/firestore_controller.dart';
+import 'package:lesson3/controller/googleML_controller.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:image_picker/image_picker.dart';
@@ -158,12 +159,19 @@ class _Controller {
           });
         },
       );
+
+      // get image labels by ML
+
+      List<String> recognitions = await GoogleMLController.getImageLabels(photo: state.photo!);
+      tempMemo.imageLabels.addAll(recognitions);
+      
       tempMemo.photoFilename = photoInfo[ARGS.Filename];
       tempMemo.photoURL = photoInfo[ARGS.DownloadURL];
       tempMemo.createdBy = state.widget.user.email!;
       tempMemo.timestamp = DateTime.now();
 
-      String docId = await FirestoreController.addPhotoMemo(photoMemo: tempMemo);
+      String docId =
+          await FirestoreController.addPhotoMemo(photoMemo: tempMemo);
       tempMemo.docId = docId;
       state.widget.photoMemoList.insert(0, tempMemo);
 
@@ -171,15 +179,12 @@ class _Controller {
 
       // return to UserHome screen
       Navigator.pop(state.context);
-
-      
     } catch (e) {
       MyDialog.circularProgressStop(state.context);
 
       if (Constant.DEV) print('----Add new photomemo failed: $e');
       MyDialog.showSnackBar(
-          context: state.context, 
-          message: 'Add New photomemo failed: $e');
+          context: state.context, message: 'Add New photomemo failed: $e');
     }
   }
 

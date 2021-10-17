@@ -4,7 +4,7 @@ import 'package:lesson3/controller/firebaseauth_controller.dart';
 import 'package:lesson3/controller/firestore_controller.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
-
+import 'package:lesson3/viewscreen/signup_screen.dart';
 import 'package:lesson3/viewscreen/userhome_Screen.dart';
 import 'package:lesson3/viewscreen/view/mydailog.dart';
 
@@ -39,8 +39,15 @@ class _SignInState extends State<SignInScreen> {
           child: Column(
             children: [
               Text(
+                'Photo Memo',
+                style: TextStyle(
+                  fontFamily: 'RockSalt',
+                  fontSize: 40.0,
+                ),
+              ),
+              Text(
                 'Sign In Please',
-                style: Theme.of(context).textTheme.headline5,
+                style: TextStyle(fontFamily: 'RockSalt', fontSize: 24.0),
               ),
               TextFormField(
                 decoration: InputDecoration(hintText: 'Email Address'),
@@ -64,7 +71,16 @@ class _SignInState extends State<SignInScreen> {
                   'Sign In',
                   style: Theme.of(context).textTheme.button,
                 ),
-              )
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              ElevatedButton(
+                  onPressed: con.signup,
+                  child: Text(
+                    'Create a new account',
+                    style: Theme.of(context).textTheme.button,
+                  ))
             ],
           ),
         ),
@@ -78,6 +94,10 @@ class _Controller {
   _Controller(this.state);
   String? email;
   String? password;
+
+void signup(){
+  Navigator.pushNamed(state.context, SignUpScreen.routName);
+}
 
   String? validateEmail(String? value) {
     if (value == null || !(value.contains('.') && value.contains('@')))
@@ -108,16 +128,17 @@ class _Controller {
     currentState.save();
 
     User? user;
-MyDialog.circularProgressStart(state.context);
+    MyDialog.circularProgressStart(state.context);
     try {
       if (email == null || password == null) {
         throw 'Email or passowrd is null';
       }
       user = await FirebaseAuthController.signIn(
           email: email!, password: password!);
-      //print('${user?.email}');
+      print('${user?.email}');
 
-      List<PhotoMemo> photoMemoList = await FirestoreController.getPhotoMemoList(email: email!);
+      List<PhotoMemo> photoMemoList =
+          await FirestoreController.getPhotoMemoList(email: email!);
       MyDialog.circularProgressStop(state.context);
       Navigator.pushNamed(
         state.context,

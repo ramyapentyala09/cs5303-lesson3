@@ -1,5 +1,6 @@
 enum PhotoSource {
-  CAMERA, GALLERY,
+  CAMERA,
+  GALLERY,
 }
 
 class PhotoMemo {
@@ -33,9 +34,33 @@ class PhotoMemo {
     List<dynamic>? sharedWith,
     List<dynamic>? imageLabels,
   }) {
-    
     this.sharedWith = sharedWith == null ? [] : [...sharedWith];
     this.imageLabels = imageLabels == null ? [] : [...imageLabels];
+  }
+  PhotoMemo.clone(PhotoMemo p) {
+    this.docId = p.docId;
+    this.createdBy = p.createdBy;
+    this.title = p.title;
+    this.memo = p.memo;
+    this.photoFilename = p.photoFilename;
+    this.photoURL = p.photoURL;
+    this.timestamp = p.timestamp;
+    this.sharedWith = [...p.sharedWith];
+    this.imageLabels = [...p.imageLabels];
+  }
+  // a.assign(b) ====> a = b
+  void assign(PhotoMemo p) {
+    this.docId = p.docId;
+    this.createdBy = p.createdBy;
+    this.title = p.title;
+    this.memo = p.memo;
+    this.photoFilename = p.photoFilename;
+    this.photoURL = p.photoURL;
+    this.timestamp = p.timestamp;
+    this.sharedWith.clear();
+    this.sharedWith.addAll(p.sharedWith);
+    this.imageLabels.clear();
+    this.imageLabels.addAll(p.imageLabels);
   }
   Map<String, dynamic> toFirestoreDoc() {
     return {
@@ -46,42 +71,49 @@ class PhotoMemo {
       PHOTO_URL: this.photoURL,
       TIMESTAMP: this.timestamp,
       SHARED_WITH: this.sharedWith,
-      IMAGE_LABELS: this.imageLabels, 
+      IMAGE_LABELS: this.imageLabels,
     };
   }
-  static PhotoMemo? fromFirestoreDoc({required Map<String, dynamic> doc, required String docId}) {
-for (var key in doc.keys) {
-  if (doc[key] == null) return null;
-}
-return PhotoMemo(
-  docId: docId,
-  createdBy: doc[CREATED_BY] ??= 'N/A',
-  title: doc[TITLE] ??= 'N/A',
-  memo: doc[MEMO] ??= 'N/A',
-  photoFilename: doc[PHOTO_FILENAME] ??= 'N/A',
-  photoURL: doc[PHOTO_URL] ??= 'N/A',
-  sharedWith: doc[SHARED_WITH] ??= [],
-  imageLabels: doc[IMAGE_LABELS] ??= [],
-  timestamp: doc[TIMESTAMP] != null ?
-  DateTime.fromMillisecondsSinceEpoch(doc[TIMESTAMP].millisecondsSinceEpoch)
-  : DateTime.now(),
-  );
+
+  static PhotoMemo? fromFirestoreDoc(
+      {required Map<String, dynamic> doc, required String docId}) {
+    for (var key in doc.keys) {
+      if (doc[key] == null) return null;
+    }
+    return PhotoMemo(
+      docId: docId,
+      createdBy: doc[CREATED_BY] ??= 'N/A',
+      title: doc[TITLE] ??= 'N/A',
+      memo: doc[MEMO] ??= 'N/A',
+      photoFilename: doc[PHOTO_FILENAME] ??= 'N/A',
+      photoURL: doc[PHOTO_URL] ??= 'N/A',
+      sharedWith: doc[SHARED_WITH] ??= [],
+      imageLabels: doc[IMAGE_LABELS] ??= [],
+      timestamp: doc[TIMESTAMP] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              doc[TIMESTAMP].millisecondsSinceEpoch)
+          : DateTime.now(),
+    );
   }
-static String? validateTitle(String? value){
-  return value == null || value.trim().length < 3 ? 'Title too short' : null;
-}
 
-static String? validateMemo(String? value){
-  return value == null || value.trim().length < 5 ? 'Memo too short' : null;
-}
-
-static String? validateSharedWith(String? value){
-  if(value == null || value.trim().length == 0) return null;
-
-  List<String> emailList = value.trim().split(RegExp('(,| )+')).map((e) => e.trim()).toList();
-  for (String e in emailList){
-    if(e.contains('@') && e.contains('.')) continue;
-    else return'Invalid Email List: Comma or space seperated  list';
+  static String? validateTitle(String? value) {
+    return value == null || value.trim().length < 3 ? 'Title too short' : null;
   }
-}
+
+  static String? validateMemo(String? value) {
+    return value == null || value.trim().length < 5 ? 'Memo too short' : null;
+  }
+
+  static String? validateSharedWith(String? value) {
+    if (value == null || value.trim().length == 0) return null;
+
+    List<String> emailList =
+        value.trim().split(RegExp('(,| )+')).map((e) => e.trim()).toList();
+    for (String e in emailList) {
+      if (e.contains('@') && e.contains('.'))
+        continue;
+      else
+        return 'Invalid Email List: Comma or space seperated  list';
+    }
+  }
 }

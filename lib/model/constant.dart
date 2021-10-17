@@ -1,12 +1,14 @@
 class Constant {
   static const DEV = true;
-  static const PHOTO_IMAGES_FOLDER = 'photo_images';
+  static const DARKMODE = true;
+  static const PHOTO_IMAGES_FOLDER = 'photo_image';
   static const PHOTOMEMO_COLLECTION = 'photomemo_collection';
 }
 
-enum ARGS{
+enum ARGS {
   USER,
   DownloadURL,
   Filename,
   PhotoMemoList,
+  OnePhotoMemo,
 }
