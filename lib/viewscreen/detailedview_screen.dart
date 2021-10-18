@@ -211,7 +211,7 @@ class _Controller {
         updateInfo[PhotoMemo.TITLE] = tempMemo.title;
       if (tempMemo.title != state.widget.photoMemo.title)
         updateInfo[PhotoMemo.MEMO] = tempMemo.memo;
-      if (listEquals(tempMemo.sharedWith, state.widget.photoMemo.sharedWith))
+      if (!listEquals(tempMemo.sharedWith, state.widget.photoMemo.sharedWith))
         updateInfo[PhotoMemo.SHARED_WITH] = tempMemo.sharedWith;
 
       if (updateInfo.isNotEmpty) {

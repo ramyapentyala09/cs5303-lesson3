@@ -185,7 +185,7 @@ class _Controller {
   void delete() async {
     MyDialog.circularProgressStart(state.context);
     delIndexes.sort(); //ascending order
-    for (int i = delIndexes.length - 1; i > 0; i--) {
+    for (int i = delIndexes.length - 1; i >=0; i--) {
       try {
         PhotoMemo p = photoMemoList[delIndexes[i]];
         await FirestoreController.deletePhotoMemo(photoMemo: p);
@@ -193,7 +193,7 @@ class _Controller {
         state.render(() {
           photoMemoList.removeAt(delIndexes[i]);
         });
-        photoMemoList.removeAt(delIndexes[i]);
+        
       } catch (e) {
         if (Constant.DEV) print('---failed to delete user memo');
         MyDialog.showSnackBar(
